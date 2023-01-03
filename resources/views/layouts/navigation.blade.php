@@ -12,9 +12,13 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
+                    @for ($i=1; $i <= config('app.total_examples'); $i++)
+                        @if (view()->exists('example' . $i))
+                        <x-nav-link :href="route('example' . $i)" :active="request()->routeIs('example' . $i)">
+                            {{ $i }}
+                        </x-nav-link>
+                        @endif
+                    @endfor
                 </div>
             </div>
 
