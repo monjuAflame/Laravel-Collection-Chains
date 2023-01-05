@@ -3,13 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\UpdateRepositoryDetails;
+use App\Models\Comment;
 use App\Models\Event;
 use App\Models\Organization;
 use App\Models\Repository;
 use App\Models\Role;
 use App\Models\User;
+use App\Notifications\YouWereMentionedNotification;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Storage;
 
 class ExampleColntroller extends Controller
 {
@@ -92,6 +96,46 @@ class ExampleColntroller extends Controller
                 'message' => $event->message
             ]
         ];
+    }
+
+    public function example6()
+    {
+        // Creating 10 temporary files for the test
+        $f = fopen(storage_path('logs/demo/laravel.log'), 'w');
+        fclose($f);
+        for ($day = 0; $day < 10; $day++) {
+            $date = now()->subDays($day)->toDateString();
+            $f = fopen(storage_path('logs/demo/laravel-' . $date . '.log'), 'w');
+            fclose($f);
+        }
+
+        $thresholdDate = now()->subDays(3)->setTime(0, 0, 0, 0);
+
+        $files = Storage::disk("logs")->allFiles();
+        $logFiles = collect($files)
+            ->mapWithKeys(function ($file) {
+                $matches = [];
+                $isMatch = preg_match("/^laravel\-(.*)\.log$/i", $file, $matches);
+
+                if (count($matches) > 1) {
+                    $date = $matches[1];
+                }
+
+                $key = $isMatch ? $date : "";
+                return [$key => $file];
+            })->forget("")
+            ->filter(function ($value, $key) use ($thresholdDate) {
+                try {
+                    $date = Carbon::parse($key);
+                } catch (\Exception $e) {
+                    return true;
+                }
+
+                return $date->isBefore($thresholdDate);
+            });
+        info($logFiles);
+
+        return view('example6');
     }
 
 
