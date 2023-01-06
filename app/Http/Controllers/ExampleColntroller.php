@@ -138,5 +138,20 @@ class ExampleColntroller extends Controller
         return view('example6');
     }
 
+    public function example7()
+    {
+        $comment = Comment::first();
+        collect($comment->mentionedUsers())
+            ->map(function ($name) {
+                return User::where('name', $name)->first();
+            })
+            ->filter()
+            ->each(function ($user) use ($comment) {
+                return $user->notify(new YouWereMentionedNotification($comment));
+            });
+
+        return view('example7');
+    }
+
 
 }
