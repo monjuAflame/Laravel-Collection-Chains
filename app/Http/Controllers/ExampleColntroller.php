@@ -8,6 +8,7 @@ use App\Models\Comment;
 use App\Models\Event;
 use App\Models\LaravelVersion;
 use App\Models\Organization;
+use App\Models\Post;
 use App\Models\Repository;
 use App\Models\Role;
 use App\Models\Score;
@@ -297,6 +298,28 @@ class ExampleColntroller extends Controller
         info($elements);
 
         return view('example12');
+    }
+
+    public function example13()
+    {
+        Post::all()
+            ->filter->isTweet()
+            ->filter(function (Post $post) {
+                return empty($post->external_url);
+            })
+            ->each(function (Post $post) {
+                preg_match('/(?=https:\/\/twitter.com\/).+?(?=")/', $post->text, $matches);
+
+                if (count($matches) > 0) {
+                    info($matches[0]);
+                    $post->external_url = $matches[0];
+
+                    // Update external_url
+                    // $post->save();
+                }
+            });
+
+        return view('example13');
     }
 
 
