@@ -10,6 +10,7 @@ use App\Models\LaravelVersion;
 use App\Models\Organization;
 use App\Models\Repository;
 use App\Models\Role;
+use App\Models\Score;
 use App\Models\User;
 use App\Notifications\YouWereMentionedNotification;
 use Carbon\Carbon;
@@ -263,5 +264,32 @@ class ExampleColntroller extends Controller
 
         return view('example10');
     }
+
+    public function example11()
+    {
+        $hazards = [
+            'BM-1' => 8,
+            'LT-1' => 7,
+            'LT-P1' => 6,
+            'LT-UNK' => 5,
+            'BM-2' => 4,
+            'BM-3' => 3,
+            'BM-4' => 2,
+            'BM-U' => 1,
+            'NoGS' => 0,
+            'Not Screened' => 0,
+        ];
+
+        $score = Score::all()->map(function ($item) use ($hazards) {
+            return $hazards[$item->field];
+        })->max();
+
+        info($score);
+
+        return view('example11');
+    }
+
+
+
 
 }
