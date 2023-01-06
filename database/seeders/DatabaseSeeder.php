@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -24,5 +25,6 @@ class DatabaseSeeder extends Seeder
         $this->call(RepositorySeeder::class);
         $this->call(EventSeeder::class);
         $this->call(CommentSeeder::class);
+        $this->call(LaravelVersionSeeder::class);
     }
 }
