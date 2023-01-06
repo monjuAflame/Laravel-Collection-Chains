@@ -16,7 +16,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
-
+use Illuminate\Support\Str;
 class ExampleColntroller extends Controller
 {
     public function example1()
@@ -246,6 +246,22 @@ class ExampleColntroller extends Controller
         return view('example9');
     }
 
-    
+    public function example10()
+    {
+        $class = 'App\\Base\\Http\\Livewire\\SomeClass';
+        $classNamespaces = [
+            'App\\Base\\Http\\Livewire',
+            'App\\Project\\Livewire'
+        ];
+
+        $classNamespace = collect($classNamespaces)
+                    ->filter(fn($x) => strpos($class, $x) !== false)->first();
+        $namespace = collect(explode('.', str_replace(['/', '\\'], '.', $classNamespace)))
+            ->map([Str::class, 'kebab'])
+            ->implode('.');
+        info($namespace);
+
+        return view('example10');
+    }
 
 }
