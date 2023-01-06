@@ -356,6 +356,36 @@ class ExampleColntroller extends Controller
         return view('example14');
     }
 
+    public function example15()
+    {
+        $filesystem = new Filesystem();
+        $plugins = [];
+        $ignore = ['nesbot/carbon'];
+        if ($filesystem->exists($path = base_path() . '/vendor/composer/installed.json')) {
+            $plugins = json_decode($filesystem->get($path), true);
+        }
 
+        $packages = collect($plugins['packages'])
+            ->mapWithKeys(function ($package) {
+                return [$this->format($package['name']) => $package['extra']['laravel'] ?? []];
+            })
+            ->each(function ($configuration) use (&$ignore) {
+                $ignore = array_merge($ignore, $configuration['dont-discover'] ?? []);
+            })
+            ->reject(function ($configuration, $package) use ($ignore) {
+                return in_array($package, $ignore);
+            })
+            ->filter()
+            ->all();
+
+        info($packages);
+
+        return view('example15');
+    }
+
+    protected function format($package)
+    {
+        return str_replace('vendor/', '', $package);
+    }
 
 }
